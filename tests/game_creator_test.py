@@ -18,7 +18,7 @@ class GameCreatorTestCase(TestCase):
             description='a game made for testing purposes'
         )
 
-        game = GameLoader(config).load('test game')
-
-        self.assertEqual('test game', game.name())
-        self.assertEqual('a game made for testing purposes', game.description())
+        games = GameLoader(config).available_games()
+        self.assertEqual(1, len(games))
+        self.assertEqual('test game', games[0].name())
+        self.assertEqual('a game made for testing purposes', games[0].description())

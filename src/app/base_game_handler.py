@@ -1,4 +1,4 @@
-from json import loads
+from json import loads, dumps
 from os import makedirs
 from os.path import exists
 from zipfile import is_zipfile, ZipFile, Path as zipFilePath
@@ -19,8 +19,8 @@ class BaseGameHandler:
 
         makedirs(self.base_game_path, exist_ok=True)
 
-    def is_valid_game(self, name: str):
-        if self._is_archived_game(name):
+    def is_valid_game(self, game_file_name: str):
+        if self._is_archived_game(game_file_name):
             return True
 
         return False
@@ -31,14 +31,14 @@ class BaseGameHandler:
 
         raise ValueError('The game does not exist')
 
-    def _is_archived_game(self, name):
-        if is_zipfile(self._archived_game_path(name)) is False:
+    def _is_archived_game(self, game_file_name: str):
+        if is_zipfile(self._archived_game_path(game_file_name)) is False:
             return False
 
-        return self._contains_valid_meta(name)
+        return self._contains_valid_meta(game_file_name)
 
-    def _contains_valid_meta(self, name):
-        meta_json = self._get_meta(name)
+    def _contains_valid_meta(self, game_file_name: str):
+        meta_json = self._get_meta(game_file_name)
         if meta_json is False:
             return False
         if Validator(meta_json, {
@@ -49,8 +49,8 @@ class BaseGameHandler:
 
         return False
 
-    def _get_meta(self, name) -> bool | dict:
-        with ZipFile(self._archived_game_path(name), 'r') as archived_game:
+    def _get_meta(self, game_file_name: str) -> bool | dict:
+        with ZipFile(self._archived_game_path(game_file_name), 'r') as archived_game:
             meta_file_path = zipFilePath(archived_game, 'meta.json')
             if meta_file_path.exists() is False:
                 return False
@@ -58,5 +58,11 @@ class BaseGameHandler:
             with meta_file_path.open('r') as meta_file:
                 return loads(meta_file.read())
 
-    def _archived_game_path(self, name: str):
-        return f'{self.base_game_path}/{name}.tba'
+    def _write_meta_file(self, description: str, name: str, zip_file: ZipFile) -> None:
+        zip_file.writestr('meta.json', dumps({
+            "name": name,
+            "description": description
+        }))
+
+    def _archived_game_path(self, game_file_name: str):
+        return f'{self.base_game_path}/{game_file_name}.tba'

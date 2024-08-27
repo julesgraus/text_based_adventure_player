@@ -1,4 +1,3 @@
-import os.path
 from glob import glob
 from os.path import isfile, basename
 from pathlib import Path
@@ -9,30 +8,31 @@ from app.Game import Game
 
 
 class GameLoader(BaseGameHandler):
-
-    def load(self, name) -> Game:
-        if self.is_valid_game(name) is False:
-            raise ValueError('Game does not exist')
-
-        meta = self._get_meta(name)
-
-        return Game(GameDto(
-            name=meta['name'],
-            description=meta['description']
-        ))
-
     def available_games(self):
-        names = []
+        games = []
 
         for game_path in glob(f'{self.base_game_path}/*.tba'):
             if not isfile(game_path):
                 continue
 
-            game_name = Path(game_path).stem
-            if not self.is_valid_game(game_name):
+            game_file_path = Path(game_path).stem
+            if not self.is_valid_game(game_file_path):
                 continue
 
-            names.append(game_name)
+            games.append(self._load(game_file_path))
 
-        names.reverse()
-        return names
+        games.reverse()
+        return games
+
+    def _load(self, file_name) -> Game:
+        if self.is_valid_game(file_name) is False:
+            raise ValueError('Game does not exist')
+
+        meta = self._get_meta(file_name)
+
+        return Game(GameDto(
+            file_name=file_name,
+            file_path=self.resolve_game_path(file_name),
+            name=meta['name'],
+            description=meta['description']
+        ))

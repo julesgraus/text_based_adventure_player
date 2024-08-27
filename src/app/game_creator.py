@@ -32,12 +32,6 @@ class GameCreator(BaseGameHandler):
 
     def _create_game(self, name, description) -> bool:
         with ZipFile(self._archived_game_path(name), 'w') as zip_file:
-            self._add_meta_file(description, name, zip_file)
+            self._write_meta_file(description, name, zip_file)
 
         return True
-
-    def _add_meta_file(self, description: str, name: str, zip_file: ZipFile):
-        zip_file.writestr('meta.json', dumps({
-            "name": name,
-            "description": description
-        }))

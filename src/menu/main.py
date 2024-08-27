@@ -1,7 +1,8 @@
-from curses.ascii import isdigit
+from textwrap import shorten
 
+from app.game_loader import GameLoader
 from jfw.Config import Config
-from menu.CreateEditGame import CreateEditGame
+from menu.create_edit_game import CreateEditGame
 from terminal_utils.texts import Texts
 from terminal_utils.utils import clear
 from terminal_utils.foreground_color import ForegroundColor as Fg
@@ -21,7 +22,6 @@ class Main:
               .add('The text based adventure player\n\n', Fg.Green))
 
     def show(self) -> None:
-        clear()
         options = (Texts()
                    .add('What is it that you ').add('want to', Fg.Yellow).add(' do?\n\n')
                    .add('1', Fg.Yellow).add(') Load a game\n')
@@ -37,11 +37,13 @@ class Main:
     def _handle(self, answer: int) -> None:
         match answer:
             case 1:
+                clear()
                 self._load_game()
             case 2:
                 self._exit()
             case 3:
                 if self._config.get('creator_mode'):
+                    clear()
                     CreateEditGame(self._config).show()
                     self.show_intro()
                     self.show()
@@ -52,8 +54,36 @@ class Main:
                 self.show()
 
     def _load_game(self) -> None:
+        game_loader = GameLoader(config=self._config)
+        available_games = game_loader.available_games()
+
+        prompt = Texts().add('Choose a game\n\n')
+
+        back_to_main_menu_option = len(available_games) + 1
+
+        for key, game in enumerate(available_games):
+            (prompt.add(str(key + 1), Fg.Yellow).add(f') {game.name()}')
+             .add(' - ')
+             .add(f'{shorten(game.description(), 120)}\n', Fg.Blue))
+
+        prompt.add(str(back_to_main_menu_option), Fg.Yellow).add(') Back to main menu\n')
+
+        answer = input(prompt)
+
         clear()
-        print(Texts().add('Implement load game', Fg.Blue))
+        if answer.isdigit():
+            answer = int(answer)
+            if answer == back_to_main_menu_option:
+                self.show()
+            elif 0 < answer <= len(available_games):
+                game = available_games[answer - 1]
+                print(f'Loaded {game.name()}')
+            else:
+                print(Texts().add('\nInvalid choice. Try again\n', Fg.Bright_Red, Bg.Red))
+                self._load_game()
+        else:
+            print(Texts().add('\nInvalid choice. Try again\n', Fg.Bright_Red, Bg.Red))
+            self._load_game()
 
     def _exit(self) -> None:
         clear()

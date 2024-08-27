@@ -15,7 +15,7 @@ class LoggerTestCase(unittest.TestCase):
         fixed_time = strptime('2024-01-19 02:11:14', '%Y-%m-%d %H:%M:%S')
 
         with (
-            patch("jfw.Logger.localtime", Mock(return_value=fixed_time)) as localtime_mock,
+            patch("jfw.Logger.localtime", Mock(return_value=fixed_time)),
             patch("builtins.open", mock_open()) as mock_file,
         ):
             logger = Logger(

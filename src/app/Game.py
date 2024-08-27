@@ -10,3 +10,9 @@ class Game:
 
     def description(self) -> str:
         return self._game_dto.get('description')
+
+    def file_name(self) -> str:
+        return self._game_dto.get('file_name')
+
+    def file_path(self) -> str:
+        return self._game_dto.get('file_path')
