@@ -6,7 +6,7 @@ from tempfile import gettempdir
 
 from app.game_creator import GameCreator
 from app.game_loader import GameLoader
-from jfw.Config import Config
+from jfw.config import Config
 from tests.helpers.GameTestHelper import GameTestHelper
 
 

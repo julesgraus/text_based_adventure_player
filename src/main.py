@@ -1,11 +1,10 @@
 import argparse
 from os.path import expanduser, dirname
-
-from jfw.Config import Config
-from jfw.ExceptionHandler import ExceptionHandler
-from jfw.Kernel import Kernel
-from jfw.Container import Container
-from jfw.Logger import Logger
+from jfw.config import Config
+from jfw.exception_handler import ExceptionHandler
+from jfw.kernel import Kernel
+from jfw.container import Container
+from jfw.logger import Logger
 from menu.main import Main as MainMenu
 
 parser = argparse.ArgumentParser(description='A text based adventure player')

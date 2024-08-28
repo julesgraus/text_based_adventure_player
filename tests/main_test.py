@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import patch, Mock
 
-from app.Game import Game
-from app.dto.Game import Game as GameDto
-from jfw.Config import Config
+from app.game import Game
+from app.dto.game import Game as GameDto
+from jfw.config import Config
 from menu.main import Main
 
 
@@ -14,7 +14,7 @@ class MainTestCaseTestCase(unittest.TestCase):
 
             output = str(mock_print.call_args.args[0])
             self.assertIn('--=[ Welcome to the adventure player ]=--', output)
-            self.assertIn('The text based adventure player', output)
+            self.assertIn('Let the adventure begin!', output)
 
     def test_it_shows_the_main_menu(self):
         with patch("builtins.input", return_value="") as mock_input:

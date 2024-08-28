@@ -1,7 +1,7 @@
 from textwrap import shorten
 
 from app.game_loader import GameLoader
-from jfw.Config import Config
+from jfw.config import Config
 from menu.create_edit_game import CreateEditGame
 from terminal_utils.texts import Texts
 from terminal_utils.utils import clear
@@ -19,7 +19,7 @@ class Main:
         print(Texts()
               .add('--=[ Welcome to the adventure player ]=--', Fg.Bright_Green, style=Style.Bold)
               .add('\n')
-              .add('The text based adventure player\n\n', Fg.Green))
+              .add('Let the adventure begin!\n\n', Fg.Green))
 
     def show(self) -> None:
         options = (Texts()

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock
 
-from jfw.Kernel import Kernel
+from jfw.kernel import Kernel
 
 
 class KernelTestCase(unittest.TestCase):

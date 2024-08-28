@@ -3,7 +3,7 @@ import io
 import unittest
 from unittest.mock import Mock
 
-from jfw.ExceptionHandler import ExceptionHandler
+from jfw.exception_handler import ExceptionHandler
 
 
 class ExceptionHandlerTestCase(unittest.TestCase):

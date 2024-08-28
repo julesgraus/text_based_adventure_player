@@ -1,6 +1,6 @@
 from typing import TypedDict, Tuple
 
-from app.dto.Character import Character
+from app.dto.character import Character
 
 
 class Game(TypedDict):

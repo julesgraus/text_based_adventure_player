@@ -1,6 +1,6 @@
 import unittest
 
-from jfw.Container import Container
+from jfw.container import Container
 
 
 class ContainerTestCase(unittest.TestCase):

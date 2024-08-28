@@ -1,6 +1,6 @@
 import traceback
 
-from jfw.Logger import Logger
+from jfw.logger import Logger
 
 file_path = __file__
 

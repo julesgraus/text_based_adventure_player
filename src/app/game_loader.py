@@ -3,8 +3,8 @@ from os.path import isfile, basename
 from pathlib import Path
 
 from app.base_game_handler import BaseGameHandler
-from app.dto.Game import Game as GameDto
-from app.Game import Game
+from app.dto.game import Game as GameDto
+from app.game import Game
 
 
 class GameLoader(BaseGameHandler):

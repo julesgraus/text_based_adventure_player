@@ -3,7 +3,7 @@ from typing import List
 from zipfile import ZipFile
 
 from app.base_game_handler import BaseGameHandler
-from jfw.Config import Config
+from jfw.config import Config
 from jfw.validation.rules.max_rule import MaxRule
 from jfw.validation.rules.min_rule import MinRule
 from jfw.validation.validator import Validator

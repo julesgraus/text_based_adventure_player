@@ -3,7 +3,7 @@ from os import makedirs
 from os.path import exists
 from zipfile import is_zipfile, ZipFile, Path as zipFilePath
 
-from jfw.Config import Config
+from jfw.config import Config
 from jfw.validation.rules.max_rule import MaxRule
 from jfw.validation.rules.min_rule import MinRule
 from jfw.validation.rules.str_rule import StrRule

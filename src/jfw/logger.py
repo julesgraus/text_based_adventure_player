@@ -1,7 +1,6 @@
 from typing import LiteralString
 from time import localtime, strftime
-
-from jfw import Config
+from jfw.config import Config
 
 
 class Logger:

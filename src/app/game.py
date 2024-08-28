@@ -1,4 +1,4 @@
-from app.dto.Game import Game as GameDto
+from app.dto.game import Game as GameDto
 
 
 class Game:

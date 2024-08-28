@@ -1,6 +1,6 @@
 from app.base_game_handler import BaseGameHandler
 from app.game_loader import GameLoader
-from jfw.Config import Config
+from jfw.config import Config
 from terminal_utils.texts import Texts
 from terminal_utils.foreground_color import ForegroundColor as Fg
 from terminal_utils.utils import clear

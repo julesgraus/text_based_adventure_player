@@ -3,7 +3,7 @@ from tempfile import gettempdir
 from os import mkdir
 from shutil import rmtree
 
-from jfw.Config import Config
+from jfw.config import Config
 
 
 class GameTestHelper:

@@ -1,8 +1,8 @@
 from time import strptime
 from unittest.mock import patch, mock_open, Mock, MagicMock
 import unittest
+from jfw.logger import Logger
 
-from jfw.Logger import Logger
 
 class LoggerTestCase(unittest.TestCase):
     def test_it_logs(self):
@@ -15,7 +15,7 @@ class LoggerTestCase(unittest.TestCase):
         fixed_time = strptime('2024-01-19 02:11:14', '%Y-%m-%d %H:%M:%S')
 
         with (
-            patch("jfw.Logger.localtime", Mock(return_value=fixed_time)),
+            patch("jfw.logger.localtime", Mock(return_value=fixed_time)),
             patch("builtins.open", mock_open()) as mock_file,
         ):
             logger = Logger(
@@ -28,7 +28,3 @@ class LoggerTestCase(unittest.TestCase):
             handle = mock_file()
             handle.write.assert_called_once_with('[2024-01-19 02:11:14] Test Message\n')
             handle.close.assert_called_once()
-
-
-
-

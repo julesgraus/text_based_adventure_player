@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from jfw.Config import Config
+from jfw.config import Config
 
 
 class ConfigTestCase(unittest.TestCase):
