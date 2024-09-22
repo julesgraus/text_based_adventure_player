@@ -4,6 +4,11 @@ A text based adventure player. It opens in the terminal, and allows you to play 
 that are presented via text dialogs in which the user is offered a little store, and can
 type commands to interact with the worlds created with this project.
 
+> Notice:
+At this time, its isn't possible yet to play a game, I just created some code with can scaffold a very simple game. 
+But you cannot play it yet. When it's possible to create and play games with this tool i will state that in this
+readme file.
+
 ## Setting up the project
 1. Open it in an ide. For example Pycharm.
 2. Make sure you have at least python 3.12.5 installed on your machine
