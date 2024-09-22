@@ -1,0 +1,47 @@
+{
+  "text": "main.txt",
+  "actions": [
+    "Example Action"
+  ],
+  "on_action": {
+    "Example Action": {
+      "decrement_state": {
+        "state_variable": {
+          "amount": 1,
+          "allowed_conditions": {
+            "state_variable": "> %other_state_variable%"
+          },
+          "validation_error": {
+            "state_variable": "Validation message when allowed condition is not met."
+          }
+        }
+      },
+      "increment_state": {
+      },
+      "move_to_dialog": "other_dialog",
+      "on_state": [
+        {
+          "condition": {
+            "state_variable": "< 12"
+          },
+          "set_state": {
+            "state_variable": "12 - random:1,5"
+          },
+          "dialog": "some_text.txt"
+        }
+      ]
+    }
+  },
+  "after_any_action": {
+    "on_state": [
+        {
+          "condition": {
+            "state_variable": "> 12"
+          },
+          "set_state": {
+          },
+          "text": "some_other_text.txt"
+        }
+      ]
+  }
+}

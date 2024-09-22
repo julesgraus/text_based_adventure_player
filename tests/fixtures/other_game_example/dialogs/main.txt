@@ -1,0 +1,10 @@
+It's a %weather% day.
+
+This is the current state of your kingdom.
+
+Gold: %gold%
+Scouts: %scouts%
+Pikeman: %pikemen%
+Archers: %archers%
+Knights: %knights%
+Healers: %healers%

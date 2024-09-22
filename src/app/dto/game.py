@@ -1,11 +1,10 @@
-from typing import TypedDict, Tuple
+from typing import TypedDict
 
-from app.dto.character import Character
+from app.dto.meta import Meta as MetaDto
+from app.dto.init import Init as InitDto
 
 
 class Game(TypedDict):
-    name: str
-    description: str
-    file_name: str
-    file_path: str
-    # characters: Tuple[Character]
+    meta: MetaDto
+    state: dict
+    init: InitDto

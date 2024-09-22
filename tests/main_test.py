@@ -1,8 +1,9 @@
 import unittest
 from unittest.mock import patch, Mock
 
-from app.game import Game
 from app.dto.game import Game as GameDto
+from app.dto.meta import Meta as MetaDto
+from app.dto.init import Init as InitDto
 from jfw.config import Config
 from menu.main import Main
 
@@ -43,12 +44,19 @@ class MainTestCaseTestCase(unittest.TestCase):
         game_loader = Mock()
         game_loader.return_value = game_loader
 
-        game = Game(game_dto=GameDto(
-            name="test game",
-            description="test description",
-            file_name="some_file_name",
-            file_path="some_file_path",
-        ))
+        game = GameDto(
+            meta=MetaDto(
+                name="test game",
+                description="test description",
+                file_name="test game.tba",
+                file_path="some file path"
+            ),
+            state={},
+            init=InitDto(
+                state={},
+                dialog='main'
+            )
+        )
 
         game_loader.available_games = Mock(return_value=[game])
 
@@ -66,7 +74,7 @@ class MainTestCaseTestCase(unittest.TestCase):
             self.assertIn(' - ', input_string)
             self.assertIn('test description', input_string)
 
-            self.assertIn('Loaded test game', output_string)
+            self.assertIn('Play test game', output_string)
 
     def test_it_handles_create_game_menu_option(self):
         with (

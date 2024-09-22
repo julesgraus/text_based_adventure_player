@@ -1,6 +1,7 @@
 from textwrap import shorten
 
 from app.game_loader import GameLoader
+from app.game_player import GamePlayer
 from jfw.config import Config
 from menu.create_edit_game import CreateEditGame
 from terminal_utils.texts import Texts
@@ -8,14 +9,13 @@ from terminal_utils.utils import clear
 from terminal_utils.foreground_color import ForegroundColor as Fg
 from terminal_utils.background_color import BackgroundColor as Bg
 from terminal_utils.style import Style as Style
-
+from sys import exit
 
 class Main:
     def __init__(self, config: Config):
         self._config = config
 
     def show_intro(self):
-        clear()
         print(Texts()
               .add('--=[ Welcome to the adventure player ]=--', Fg.Bright_Green, style=Style.Bold)
               .add('\n')
@@ -62,9 +62,9 @@ class Main:
         back_to_main_menu_option = len(available_games) + 1
 
         for key, game in enumerate(available_games):
-            (prompt.add(str(key + 1), Fg.Yellow).add(f') {game.name()}')
+            (prompt.add(str(key + 1), Fg.Yellow).add(f') {game['meta']['name']}')
              .add(' - ')
-             .add(f'{shorten(game.description(), 120)}\n', Fg.Blue))
+             .add(f'{shorten(game['meta']['description'], 120)}\n', Fg.Blue))
 
         prompt.add(str(back_to_main_menu_option), Fg.Yellow).add(') Back to main menu\n')
 
@@ -77,7 +77,7 @@ class Main:
                 self.show()
             elif 0 < answer <= len(available_games):
                 game = available_games[answer - 1]
-                print(f'Loaded {game.name()}')
+                (GamePlayer()).play(game)
             else:
                 print(Texts().add('\nInvalid choice. Try again\n', Fg.Bright_Red, Bg.Red))
                 self._load_game()

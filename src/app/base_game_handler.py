@@ -1,7 +1,11 @@
 from json import loads, dumps
 from os import makedirs
-from os.path import exists
-from zipfile import is_zipfile, ZipFile, Path as zipFilePath
+from os.path import isdir
+from typing import Dict, Any
+import hashlib
+from app.dto.init import Init as InitDto
+from app.dto.meta import Meta as MetaDto
+from app.dto.state import State as StateDto
 
 from jfw.config import Config
 from jfw.validation.rules.max_rule import MaxRule
@@ -19,50 +23,75 @@ class BaseGameHandler:
 
         makedirs(self.base_game_path, exist_ok=True)
 
-    def is_valid_game(self, game_file_name: str):
-        if self._is_archived_game(game_file_name):
+    def is_valid_game(self, name: str):
+        if isdir(self._game_path(name=name)) is False:
+            return False
+
+        if self._contains_valid_meta(name):
             return True
 
         return False
 
-    def resolve_game_path(self, name: str):
-        if exists(self._archived_game_path(name)):
-            return self._archived_game_path(name)
+    def game_path_or_error(self, name: str) -> str | bool:
+        if isdir(self._game_path(name)):
+            return self._game_path(name)
 
-        raise ValueError('The game does not exist')
-
-    def _is_archived_game(self, game_file_name: str):
-        if is_zipfile(self._archived_game_path(game_file_name)) is False:
-            return False
-
-        return self._contains_valid_meta(game_file_name)
+        raise ValueError(f'The game ({self._game_path(name)}) does not exist')
 
     def _contains_valid_meta(self, game_file_name: str):
         meta_json = self._get_meta(game_file_name)
-        if meta_json is False:
-            return False
-        if Validator(meta_json, {
+
+        return meta_json is not False and Validator(meta_json, {
             'name': [StrRule(), MinRule(1), MaxRule(255)],
             'description': [StrRule(), MinRule(1), MaxRule(255)]
-        }).is_valid():
-            return True
+        }).is_valid()
 
-        return False
+    def _get_meta(self, name: str) -> bool | MetaDto:
+        with (open(file=f'{self.game_path_or_error(name=name)}/meta.json', mode='r')) as meta_file:
+            contents = loads(meta_file.read())
 
-    def _get_meta(self, game_file_name: str) -> bool | dict:
-        with ZipFile(self._archived_game_path(game_file_name), 'r') as archived_game:
-            meta_file_path = zipFilePath(archived_game, 'meta.json')
-            if meta_file_path.exists() is False:
-                return False
+        return MetaDto(**contents)
 
-            with meta_file_path.open('r') as meta_file:
-                return loads(meta_file.read())
+    def _get_init(self, name: str) -> bool | InitDto:
+        with (open(file=f'{self.game_path_or_error(name=name)}/init.json', mode='r')) as init_file:
+            contents = loads(init_file.read())
 
-    def _write_meta_file(self, description: str, name: str, zip_file: ZipFile) -> None:
-        zip_file.writestr('meta.json', dumps({
-            "name": name,
-            "description": description
-        }))
+        return InitDto(**contents)
 
-    def _archived_game_path(self, game_file_name: str):
-        return f'{self.base_game_path}/{game_file_name}.tba'
+    def _get_state(self, name: str) -> bool | StateDto:
+        with (open(file=f'{self.game_path_or_error(name=name)}/state.json', mode='r')) as state_file:
+            contents = loads(state_file.read())
+
+        if contents['checksum'] != self._dict_hash(contents['data']):
+            raise RuntimeError('invalid state')
+
+        return StateDto(**contents)
+
+    def _get_dialog(self, name: str, game_name: str) -> bool | dict:
+        with (open(file=f'{self._game_path(name=game_name)}/dialogs{name}.json', mode='r')) as dialog_file:
+            contents = loads(dialog_file.read())
+
+        return contents
+
+    def _write_meta_file(self, meta: MetaDto, name: str) -> None:
+        with (open(file=f'{self._game_path(name=name)}/meta.json', mode='w')) as dialog_file:
+            dialog_file.write(dumps(meta))
+
+    def _write_state_file(self, state: dict[str, any], name: str) -> None:
+        with open(f'{self._game_path(name=name)}/state.json', "w") as file:
+            file.write(dumps(StateDto(
+                checksum=self._dict_hash(state),
+                data=state
+            )))
+
+    def _game_path(self, name: str) -> str:
+        return f'{self.base_game_path}/{name}'
+
+    def _dict_hash(self, dictionary: Dict[str, Any]) -> str:
+        """MD5 hash of a dictionary."""
+        dhash = hashlib.sha256()
+        # We need to sort arguments so {'a': 1, 'b': 2} is
+        # the same as {'b': 2, 'a': 1}
+        encoded = dumps(dictionary, sort_keys=True).encode()
+        dhash.update(encoded)
+        return dhash.hexdigest()

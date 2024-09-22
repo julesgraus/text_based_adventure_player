@@ -1,0 +1,7 @@
+Welcome to your newly created game. This text can be edited by extracting the game file.
+It is actually a zip file. And this text is located in a file called <dialog_file_name>.txt
+
+Just edit that file, and you've created your first file that will be presented to the user.
+Edit the <dialog_file_name>.json file to your liking to implement the logic for that dialog.
+
+Finally, edit <init_file_name>.json to set the initial state.

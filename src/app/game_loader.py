@@ -1,18 +1,20 @@
 from glob import glob
-from os.path import isfile, basename
+from os.path import isfile
 from pathlib import Path
 
 from app.base_game_handler import BaseGameHandler
 from app.dto.game import Game as GameDto
-from app.game import Game
+from terminal_utils.texts import Texts
+from terminal_utils.foreground_color import ForegroundColor as Fg
+from terminal_utils.background_color import BackgroundColor as Bg
 
 
 class GameLoader(BaseGameHandler):
     def available_games(self):
         games = []
 
-        for game_path in glob(f'{self.base_game_path}/*.tba'):
-            if not isfile(game_path):
+        for game_path in glob(f'{self.base_game_path}/*'):
+            if isfile(game_path):
                 continue
 
             game_file_path = Path(game_path).stem
@@ -24,15 +26,24 @@ class GameLoader(BaseGameHandler):
         games.reverse()
         return games
 
-    def _load(self, file_name) -> Game:
-        if self.is_valid_game(file_name) is False:
+    def _load(self, name: str) -> GameDto:
+        if self.is_valid_game(name=name) is False:
             raise ValueError('Game does not exist')
 
-        meta = self._get_meta(file_name)
+        meta = self._get_meta(name=name)
+        state = self._get_state(name=name)
+        init = self._get_init(name=name)
 
-        return Game(GameDto(
-            file_name=file_name,
-            file_path=self.resolve_game_path(file_name),
-            name=meta['name'],
-            description=meta['description']
-        ))
+        if meta is False or state is False or init is False:
+            print(Texts().add('meta, state, or init file(s) did not exist. Exiting', Fg.Bright_Red, Bg.Red))
+            exit(1)
+
+        if len(state['data']) == 0:
+            state['data'] = init['state']
+            self._write_state_file(state=state, name=name)
+
+        return GameDto(
+            meta=meta,
+            state=state,
+            init=init,
+        )

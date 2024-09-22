@@ -64,9 +64,15 @@ class GameLoaderTestCase(unittest.TestCase):
         game_loader = GameLoader(config)
 
         available_games = game_loader.available_games()
+        state = available_games[0]['state']
+
         self.assertEqual(2, len(available_games))
-        self.assertEqual('first game', available_games[0].name())
-        self.assertEqual('second game', available_games[1].name())
+        self.assertEqual('first game', available_games[1]['meta']['name'])
+        self.assertEqual('second game', available_games[0]['meta']['name'])
+        self.assertIn('checksum', state)
+        self.assertIn('data', state)
+        self.assertIn('state_variable', state['data'])
+        self.assertEqual(1, state['data']['state_variable'])
 
 
 if __name__ == '__main__':

@@ -1,0 +1,71 @@
+{
+  "text": "main.txt",
+  "actions": [
+    "Recruit Guard (%guard_price%g)",
+    "Recruit Knight (%knight_price%g)",
+    "Recruit Scout (%scout_price%g)",
+    "Recruit Pikeman (%pikeman_price%g)",
+    "Recruit Archer (%archer_price%g)",
+    "Recruit Knight (%knight_price%g)",
+    "Recruit Healer (%healer_price%g)"
+  ],
+  "on_action": {
+    "Recruit Guard (%guard_price%g)": {
+      "decrement_state": {
+        "gold": {
+          "amount": "%guard_price%",
+          "allowed_conditions": {
+            "gold": "> %guard_price%",
+            "guard": "< %guard%"
+          },
+          "validation_error": {
+            "gold": "You don't have enough gold.",
+            "guard": "You can only have 200 guards at maximum"
+          }
+        }
+      },
+      "increment_state": {
+        "guards": {
+          "amount": 1
+        }
+      },
+      "on_state": [
+        {
+          "condition": {
+            "guards": "> 12",
+            "random": "1,5"
+          },
+          "set_state": {
+            "guards": "%guard% - random:1,5"
+          },
+          "text": "enemy_attacked.txt"
+        }
+      ]
+    },
+    "Recruit Knight (%knight_price%g)": {
+    },
+    "Recruit Scout (%scouts_price%g)": {
+    },
+    "Recruit Pikeman (%pikemen_price%g)": {
+    },
+    "Recruit Archer (%archers_price%g)": {
+    },
+    "Recruit Knight (%knights_price%g)": {
+    },
+    "Recruit Healer (%healers_price%g)": {
+    }
+  },
+  "after_action": {
+    "on_state": [
+        {
+          "condition": {
+            "knights": "> 12"
+          },
+          "set_state": {
+            "guards": "%enemy_guard% + random:1,2"
+          },
+          "text": "enemy_did_reinforce.txt"
+        }
+      ]
+  }
+}

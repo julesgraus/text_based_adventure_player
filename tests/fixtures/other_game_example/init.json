@@ -1,0 +1,19 @@
+{
+  "state": {
+    "gold": 500,
+    "scouts" : 1,
+    "pikemen" : 1,
+    "archers": 1,
+    "guards": 1,
+    "knights": 1,
+    "healers": 1,
+    "weather": "sunny",
+    "scout_price": 5,
+    "pikeman_price": 5,
+    "archer_price": 7,
+    "guard_price": 10,
+    "knight_price": 10,
+    "healer_price": 20
+  },
+  "dialog": "main"
+}

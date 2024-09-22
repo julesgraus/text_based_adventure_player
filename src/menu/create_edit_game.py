@@ -1,15 +1,16 @@
+import os
 import textwrap
 from zipfile import ZipFile
 
-from app.game import Game
+from app.dto.game import Game as GameDto
 from app.base_game_handler import BaseGameHandler
 from app.game_creator import GameCreator
 from app.game_loader import GameLoader
 from jfw.config import Config
 from terminal_utils.texts import Texts
-from terminal_utils.foreground_color import ForegroundColor as Fg
 from terminal_utils.utils import clear
 from textwrap import shorten
+from terminal_utils.text import ForegroundColor as Fg
 
 
 class CreateEditGame(BaseGameHandler):
@@ -36,9 +37,9 @@ class CreateEditGame(BaseGameHandler):
 
         game_counter = 1
         for game in available_games:
-            (prompt.add(str(game_counter), Fg.Yellow).add(f') {game.name()}')
+            (prompt.add(str(game_counter), Fg.Yellow).add(f') {game['meta']['name']}')
              .add(' - ')
-             .add(f'{shorten(game.description(), 120)}\n', Fg.Blue))
+             .add(f'{shorten(game['meta']['description'], 120)}\n', Fg.Blue))
 
             game_counter = game_counter + 1
 
@@ -52,10 +53,10 @@ class CreateEditGame(BaseGameHandler):
         if answer.isdigit():
             if int(answer) is create_game_option:
                 self._show_create_game()
-                print(Texts().add('\nGame created successfully. ', Fg.Bright_Green))
                 clear()
                 self.show()
             elif int(answer) is back_to_main_menu_option:
+                clear()
                 return None
             else:
                 clear()
@@ -80,8 +81,11 @@ class CreateEditGame(BaseGameHandler):
         result = game_creator.create(name, description)
 
         if result is True:
+            clear()
+            print(Texts().add('The game was created successfully\n', Fg.Bright_Green))
             return True
         elif result is False:
+            clear()
             print(Texts().add('The game could not be created\n', Fg.Bright_Red))
         elif type(result) is list:
             clear()
@@ -96,9 +100,9 @@ class CreateEditGame(BaseGameHandler):
             self._show_create_game()
         pass
 
-    def _show_edit_game(self, game: Game) -> None:
+    def _show_edit_game(self, game: GameDto) -> None:
         prompt = (Texts()
-                  .add('You did choose ').add(game.name(), Fg.Yellow).add('. What do you want to edit?\n\n')
+                  .add('You did choose ').add(game['meta']['name'], Fg.Yellow).add('. What do you want to edit?\n\n')
                   .add('1', Fg.Yellow).add(') Game name\n')
                   .add('2', Fg.Yellow).add(') Description\n')
                   .add('3', Fg.Yellow).add(') Back to main menu\n')
@@ -118,48 +122,51 @@ class CreateEditGame(BaseGameHandler):
 
         return None
 
-    def _show_and_handle_edit_name(self, game: Game):
+    def _show_and_handle_edit_name(self, game: GameDto):
+        old_name = game['meta']['name']
         new_name = input(Texts()
                          .add('Type the new ')
                          .add('name', Fg.Yellow)
                          .add(' or press enter to keep ')
-                         .add(game.name(), Fg.Green)
+                         .add(game['meta']['name'], Fg.Green)
                          .add('\n'))
 
-        if new_name == game.name():
+        if new_name == game['meta']['name']:
             return
 
-        meta = self._get_meta(game.file_name())
+        meta = self._get_meta(name=game['meta']['name'])
+        meta['name'] = new_name
 
-        with ZipFile(self._archived_game_path(game.file_name()), 'w') as zip_file:
-            self._write_meta_file(
-                description=meta['description'],
-                name=new_name,
-                zip_file=zip_file
-            )
+        self._write_meta_file(
+            meta=meta,
+            name=old_name,
+        )
+
+        os.rename(src=self._game_path(name=old_name), dst=self._game_path(name=new_name))
 
         clear()
         print(Texts().add('The name is updated successfully', Fg.Green))
 
-    def _show_and_handle_edit_description(self, game: Game):
+    def _show_and_handle_edit_description(self, game: GameDto):
+        name = game['meta']['name']
         new_description = input(Texts()
                                 .add('Type the new ')
                                 .add('description', Fg.Yellow)
                                 .add(' or press enter to keep the description: ')
-                                .add(game.description(), Fg.Green)
+                                .add(game['meta']['description'], Fg.Green)
                                 .add('\n'))
 
-        if new_description == game.description():
+        if new_description == game['meta']['description']:
             return
 
-        meta = self._get_meta(game.file_name())
+        meta = self._get_meta(name=game['meta']['name'])
 
-        with ZipFile(self._archived_game_path(game.file_name()), 'w') as zip_file:
-            self._write_meta_file(
-                description=new_description,
-                name=meta['name'],
-                zip_file=zip_file
-            )
+        meta['description'] = new_description
+
+        self._write_meta_file(
+            meta=meta,
+            name=name,
+        )
 
         clear()
         print(Texts().add('The description is updated successfully', Fg.Green))
