@@ -22,4 +22,6 @@ class MinRule(Rule):
             return f'{attribute} must be longer than {self.length}'
 
         return f'{attribute} must be bigger than {self.length}'
-        pass
+
+    def should_validate(self, value) -> bool:
+        return value is not None

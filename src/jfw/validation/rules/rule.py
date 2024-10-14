@@ -9,3 +9,7 @@ class Rule(ABC):
     @abstractmethod
     def message(self, attribute: str, value) -> str:
         pass
+
+    @abstractmethod
+    def should_validate(self, value) -> bool:
+        pass

@@ -13,7 +13,7 @@ class GameLoader(BaseGameHandler):
     def available_games(self):
         games = []
 
-        for game_path in glob(f'{self.base_game_path}/*'):
+        for game_path in glob(f'{self._base_game_path}/*'):
             if isfile(game_path):
                 continue
 
@@ -38,12 +38,28 @@ class GameLoader(BaseGameHandler):
             print(Texts().add('meta, state, or init file(s) did not exist. Exiting', Fg.Bright_Red, Bg.Red))
             exit(1)
 
-        if len(state['data']) == 0:
-            state['data'] = init['state']
-            self._write_state_file(state=state, name=name)
+        if len(state['game_data']) == 0:
+            state['game_data'] = init['state']
+            self._write_state_file(state=state['game_data'], system_state=state['system_data'], name=name)
 
         return GameDto(
             meta=meta,
             state=state,
             init=init,
         )
+
+    def reset_and_load(self, name: str) -> GameDto:
+        if self.is_valid_game(name=name) is False:
+            raise ValueError('Game does not exist')
+
+        state = self._get_state(name=name)
+        init = self._get_init(name=name)
+
+        if init is False or state is False:
+            print(Texts().add('init or state file(s) did not exist. Exiting', Fg.Bright_Red, Bg.Red))
+            exit(1)
+
+        state['data'] = init['state']
+        self._write_state_file(state=state['game_data'], system_state=state['system_data'], name=name)
+
+        return self._load(name)

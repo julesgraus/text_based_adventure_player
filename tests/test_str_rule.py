@@ -13,6 +13,8 @@ class MaxRuleTestCase(unittest.TestCase):
     def test_message(self):
         self.assertEqual('some attribute must be a string', StrRule().message('some attribute', 0.1))
 
+    def test_should_validate(self):
+        self.assertEqual(False, StrRule().should_validate(None))
 
 if __name__ == '__main__':
     unittest.main()

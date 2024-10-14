@@ -40,5 +40,11 @@ class MinRuleTestCase(unittest.TestCase):
         self.assertEqual('some attribute must be longer than 1', MinRule(1).message('some attribute', ''))
         self.assertEqual('some attribute must be bigger than 1', MinRule(1).message('some attribute', 2))
 
+    def test_should_validate_when_value_is_none(self):
+        self.assertEqual(False, MinRule(1).should_validate(None))
+
+    def test_should_validate_when_value_is_not_none(self):
+        self.assertEqual(True, MinRule(1).should_validate(''))
+
 if __name__ == '__main__':
     unittest.main()

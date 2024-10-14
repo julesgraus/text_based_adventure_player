@@ -16,15 +16,16 @@ from jfw.validation.validator import Validator
 
 class BaseGameHandler:
     def __init__(self, config: Config):
-        self.base_game_path = config.get('base_game_path')
+        self._config = config
+        self._base_game_path = config.get('base_game_path')
 
-        if self.base_game_path is None:
+        if self._base_game_path is None:
             raise RuntimeError('base_game_path config setting not set')
 
-        makedirs(self.base_game_path, exist_ok=True)
+        makedirs(self._base_game_path, exist_ok=True)
 
     def is_valid_game(self, name: str):
-        if isdir(self._game_path(name=name)) is False:
+        if isdir(self._game_directory(name=name)) is False:
             return False
 
         if self._contains_valid_meta(name):
@@ -33,10 +34,10 @@ class BaseGameHandler:
         return False
 
     def game_path_or_error(self, name: str) -> str | bool:
-        if isdir(self._game_path(name)):
-            return self._game_path(name)
+        if isdir(self._game_directory(name)):
+            return self._game_directory(name)
 
-        raise ValueError(f'The game ({self._game_path(name)}) does not exist')
+        raise ValueError(f'The game ({self._game_directory(name)}) does not exist')
 
     def _contains_valid_meta(self, game_file_name: str):
         meta_json = self._get_meta(game_file_name)
@@ -62,30 +63,35 @@ class BaseGameHandler:
         with (open(file=f'{self.game_path_or_error(name=name)}/state.json', mode='r')) as state_file:
             contents = loads(state_file.read())
 
-        if contents['checksum'] != self._dict_hash(contents['data']):
+        if contents['game_data_checksum'] != self._dict_hash(contents['game_data']):
             raise RuntimeError('invalid state')
+
+        if contents['system_data_checksum'] != self._dict_hash(contents['system_data']):
+            raise RuntimeError('invalid system state')
 
         return StateDto(**contents)
 
     def _get_dialog(self, name: str, game_name: str) -> bool | dict:
-        with (open(file=f'{self._game_path(name=game_name)}/dialogs{name}.json', mode='r')) as dialog_file:
+        with (open(file=f'{self._game_directory(name=game_name)}/dialogs{name}.json', mode='r')) as dialog_file:
             contents = loads(dialog_file.read())
 
         return contents
 
     def _write_meta_file(self, meta: MetaDto, name: str) -> None:
-        with (open(file=f'{self._game_path(name=name)}/meta.json', mode='w')) as dialog_file:
-            dialog_file.write(dumps(meta))
+        with (open(file=f'{self._game_directory(name=name)}/meta.json', mode='w')) as meta_file:
+            meta_file.write(dumps(meta))
 
-    def _write_state_file(self, state: dict[str, any], name: str) -> None:
-        with open(f'{self._game_path(name=name)}/state.json', "w") as file:
+    def _write_state_file(self, state: dict[str, any], system_state: dict[str, any], name: str) -> None:
+        with open(f'{self._game_directory(name=name)}/state.json', "w") as file:
             file.write(dumps(StateDto(
-                checksum=self._dict_hash(state),
-                data=state
+                game_data_checksum=self._dict_hash(state),
+                system_data_checksum=self._dict_hash(system_state),
+                game_data=state,
+                system_data=system_state
             )))
 
-    def _game_path(self, name: str) -> str:
-        return f'{self.base_game_path}/{name}'
+    def _game_directory(self, name: str) -> str:
+        return f'{self._base_game_path}/{name}'
 
     def _dict_hash(self, dictionary: Dict[str, Any]) -> str:
         """MD5 hash of a dictionary."""

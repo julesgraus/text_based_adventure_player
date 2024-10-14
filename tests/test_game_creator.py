@@ -28,8 +28,10 @@ class GameCreatorTestCase(TestCase):
         self.assertIn(f'{game_test_helper.tempdir}/test game', games[0]['meta']['game_directory'])
 
         # State
-        self.assertEqual({'state_variable': 1}, games[0]['state']['data'])
-        self.assertEqual(game_loader._dict_hash({}), games[0]['state']['checksum'])
+        self.assertEqual({'state_variable': 1}, games[0]['state']['game_data'])
+        self.assertEqual({'current_dialog': None}, games[0]['state']['system_data'])
+        self.assertEqual(game_loader._dict_hash({}), games[0]['state']['game_data_checksum'])
+        self.assertEqual(game_loader._dict_hash({'current_dialog': None}), games[0]['state']['system_data_checksum'])
 
         # Init
         self.assertEqual(1, games[0]['init']['state']['state_variable'])

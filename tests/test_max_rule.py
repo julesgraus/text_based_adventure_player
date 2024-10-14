@@ -40,6 +40,11 @@ class MaxRuleTestCase(unittest.TestCase):
         self.assertEqual('some attribute must not exceed a length of 1', MaxRule(1).message('some attribute', ''))
         self.assertEqual('some attribute must not be bigger than 1', MaxRule(1).message('some attribute', 2))
 
+    def test_should_validate_when_value_is_none(self):
+        self.assertEqual(False, MaxRule(1).should_validate(None))
+
+    def test_should_validate_when_value_is_not_none(self):
+        self.assertEqual(True, MaxRule(1).should_validate(''))
 
 if __name__ == '__main__':
     unittest.main()

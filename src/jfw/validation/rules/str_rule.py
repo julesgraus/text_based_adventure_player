@@ -7,6 +7,6 @@ class StrRule(Rule):
 
     def message(self, attribute: str, value) -> str:
         return f'{attribute} must be a string'
-        pass
 
-
+    def should_validate(self, value) -> bool:
+        return value is not None

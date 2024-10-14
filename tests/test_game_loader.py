@@ -69,10 +69,13 @@ class GameLoaderTestCase(unittest.TestCase):
         self.assertEqual(2, len(available_games))
         self.assertEqual('first game', available_games[1]['meta']['name'])
         self.assertEqual('second game', available_games[0]['meta']['name'])
-        self.assertIn('checksum', state)
-        self.assertIn('data', state)
-        self.assertIn('state_variable', state['data'])
-        self.assertEqual(1, state['data']['state_variable'])
+        self.assertIn('game_data_checksum', state)
+        self.assertIn('system_data_checksum', state)
+        self.assertIn('game_data', state)
+        self.assertIn('system_data', state)
+        self.assertIn('state_variable', state['game_data'])
+        self.assertIn('current_dialog', state['system_data'])
+        self.assertEqual(1, state['game_data']['state_variable'])
 
 
 if __name__ == '__main__':

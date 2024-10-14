@@ -1,6 +1,4 @@
 import os
-import textwrap
-from zipfile import ZipFile
 
 from app.dto.game import Game as GameDto
 from app.base_game_handler import BaseGameHandler
@@ -14,15 +12,16 @@ from terminal_utils.text import ForegroundColor as Fg
 
 
 class CreateEditGame(BaseGameHandler):
-    def __init__(self, config: Config):
+
+    def __init__(self, config: Config, game_loader: GameLoader, game_creator: GameCreator):
         super().__init__(config)
-        self._config = config
+        self._game_loader = game_loader
+        self._game_creator = game_creator
 
     def show(self) -> None:
         prompt = Texts()
-        game_loader = GameLoader(config=self._config)
 
-        available_games = game_loader.available_games()
+        available_games = self._game_loader.available_games()
         available_game_count = len(available_games)
         create_game_option = available_game_count + 1
         back_to_main_menu_option = available_game_count + 2
@@ -77,8 +76,7 @@ class CreateEditGame(BaseGameHandler):
                             .add(' of your new game?\n')
                             )
 
-        game_creator = GameCreator(config=self._config)
-        result = game_creator.create(name, description)
+        result = self._game_creator.create(name, description)
 
         if result is True:
             clear()
@@ -142,7 +140,7 @@ class CreateEditGame(BaseGameHandler):
             name=old_name,
         )
 
-        os.rename(src=self._game_path(name=old_name), dst=self._game_path(name=new_name))
+        os.rename(src=self._game_directory(name=old_name), dst=self._game_directory(name=new_name))
 
         clear()
         print(Texts().add('The name is updated successfully', Fg.Green))

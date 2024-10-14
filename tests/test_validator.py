@@ -1,7 +1,9 @@
 import unittest
 
 from jfw.validation.rules.int_rule import IntRule
+from jfw.validation.rules.max_rule import MaxRule
 from jfw.validation.rules.min_rule import MinRule
+from jfw.validation.rules.required_rule import RequiredRule
 from jfw.validation.rules.str_rule import StrRule
 from jfw.validation.validator import Validator
 
@@ -43,6 +45,32 @@ class ValidatorTestCase(unittest.TestCase):
         self.assertFalse(validator.has_error())
         self.assertFalse(validator.has_error('name'))
         self.assertListEqual([], validator.get_errors('name'))
+
+    def test_it_validates_when_there_is_a_rule_that_should_not_validate_when_there_is_no_value(self):
+        validator = Validator({
+        }, {
+            'name': [StrRule()],
+        })
+
+        self.assertTrue(validator.is_valid())
+
+    def test_it_validates_when_there_is_a_rule_that_should_validate_when_there_is_no_value(self):
+        validator = Validator({
+        }, {
+            'name': [RequiredRule()],
+        })
+
+        self.assertFalse(validator.is_valid())
+
+    def test_it_invalidates_when_there_is_at_least_one_rule_false(self):
+        validator = Validator({
+            'name': '123'
+        }, {
+            'name': [MaxRule(1), MinRule(2)],
+        })
+
+        self.assertFalse(validator.is_valid())
+
 
 
 if __name__ == '__main__':

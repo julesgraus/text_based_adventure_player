@@ -1,3 +1,4 @@
+from jfw.validation.rules.required_rule import RequiredRule
 from jfw.validation.rules.rule import Rule
 
 
@@ -14,15 +15,14 @@ class Validator:
 
         for attribute in self.rules:
             for rule in self.rules[attribute]:
+                value = None
                 if attribute in self.data:
                     value = self.data[attribute]
 
-                    if rule.is_valid(value) is False:
-                        result = False
-                        if attribute not in self._errors:
-                            self._errors[attribute] = []
-
-                        self._errors[attribute].append(rule.message(attribute, value))
+                if rule.should_validate(value=value) and not self._validate_attribute_with_value_against_rule(attribute=attribute,
+                                                                                                   rule=rule,
+                                                                                                   value=value):
+                    result = False
 
         return result
 
@@ -43,6 +43,15 @@ class Validator:
             return self._errors[attribute]
         else:
             return []
+
+    def _validate_attribute_with_value_against_rule(self, attribute: str, rule: Rule, value) -> bool:
+        if rule.is_valid(value) is False:
+            if attribute not in self._errors:
+                self._errors[attribute] = []
+
+            self._errors[attribute].append(rule.message(attribute, value))
+            return False
+        return True
 
     def _validate_rules(self):
         for key in self.rules:

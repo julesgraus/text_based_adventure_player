@@ -11,9 +11,6 @@ from jfw.validation.validator import Validator
 
 
 class GameCreator(BaseGameHandler):
-    def __init__(self, config: Config):
-        super().__init__(config=config)
-
     def create(self, name: str, description: str) -> list[str] | bool:
         if self.is_valid_game(name):
             return ['The game already exists']
@@ -32,20 +29,20 @@ class GameCreator(BaseGameHandler):
         return self._create_game(name, description)
 
     def _create_game(self, name: str, description: str) -> bool:
-        dir = self._game_path(name)
+        directory = self._game_directory(name)
 
-        if isdir(dir):
+        if isdir(directory):
             raise RuntimeError(f'Game "{name}" already exists')
         else:
-            mkdir(dir)
+            mkdir(directory)
 
         self._write_meta_file(meta=MetaDto(
             description=description,
             name=name,
-            game_directory=dir
+            game_directory=directory
         ), name=name)
 
-        self._write_state_file(state={}, name=name)
+        self._write_state_file(state={}, system_state={'current_dialog': None}, name=name)
         self._write_new_init_file(name=name)
         self._make_dialog(dialog_name="main", name=name)
 
