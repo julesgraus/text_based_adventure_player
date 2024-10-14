@@ -3,7 +3,7 @@ import unittest
 from jfw.validation.rules.float_rule import FloatRule
 
 
-class FloatRuleTestCase(unittest.TestCase):
+class TestFloatRule(unittest.TestCase):
     def test_validity(self):
         self.assertTrue(FloatRule().is_valid(1.0))
         self.assertFalse(FloatRule().is_valid(1))

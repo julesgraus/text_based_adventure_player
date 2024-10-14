@@ -10,7 +10,7 @@ from jfw.config import Config
 from tests.helpers.GameTestHelper import GameTestHelper
 
 
-class GameLoaderTestCase(unittest.TestCase):
+class TestGameLoader(unittest.TestCase):
     def test_it_creates_the_base_game_path_on_init(self) -> None:
         tempdir = f'{gettempdir()}/test'
 

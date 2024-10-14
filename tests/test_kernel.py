@@ -4,7 +4,7 @@ from unittest.mock import Mock
 from jfw.kernel import Kernel
 
 
-class KernelTestCase(unittest.TestCase):
+class TestKernel(unittest.TestCase):
     def test_it_calls_the_callback(self):
         kernel = Kernel(exception_handler=Mock())
         main = Mock()

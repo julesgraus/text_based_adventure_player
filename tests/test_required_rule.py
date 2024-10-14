@@ -3,7 +3,7 @@ import unittest
 from jfw.validation.rules.required_rule import RequiredRule
 
 
-class RequiredRuleTestCase(unittest.TestCase):
+class TestRequiredRule(unittest.TestCase):
     def test_validity(self):
         self.assertTrue(RequiredRule().is_valid(' '))
         self.assertTrue(RequiredRule().is_valid(('value', 9)))

@@ -4,7 +4,7 @@ import unittest
 from jfw.config import Config
 
 
-class ConfigTestCase(unittest.TestCase):
+class TestConfig(unittest.TestCase):
     def setUp(self):
         self.base_path = os.path.dirname(__file__)
         self.config = Config(self.base_path)

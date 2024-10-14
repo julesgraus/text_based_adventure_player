@@ -6,7 +6,7 @@ from jfw.config import Config
 from tests.helpers.GameTestHelper import GameTestHelper
 
 
-class GameCreatorTestCase(TestCase):
+class TestGameCreator(TestCase):
     def test_it_creates_games(self):
         config = Config('')
 

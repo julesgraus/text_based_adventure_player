@@ -8,7 +8,7 @@ from jfw.validation.rules.str_rule import StrRule
 from jfw.validation.validator import Validator
 
 
-class ValidatorTestCase(unittest.TestCase):
+class TestValidator(unittest.TestCase):
     def test_it_raises_a_value_error_when_the_rules_are_not_wrapped_in_tuple_or_list(self):
         with self.assertRaises(ValueError) as context:
             Validator({

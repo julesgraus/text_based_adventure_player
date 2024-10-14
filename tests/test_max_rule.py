@@ -3,7 +3,7 @@ import unittest
 from jfw.validation.rules.max_rule import MaxRule
 
 
-class MaxRuleTestCase(unittest.TestCase):
+class TestMaxRule(unittest.TestCase):
     def test_validity(self):
         self.assertTrue(MaxRule(1).is_valid(''))
         self.assertTrue(MaxRule(1).is_valid(' '))

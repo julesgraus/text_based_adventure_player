@@ -14,7 +14,7 @@ from menu.create_edit_game import CreateEditGame
 from menu.main import Main
 
 
-class MainTestCaseTestCase(unittest.TestCase):
+class TestMain(unittest.TestCase):
     def test_it_shows_the_main_menu_intro(self):
         with patch("builtins.print", Mock()) as mock_print:
             (Main(

@@ -3,7 +3,7 @@ import unittest
 from jfw.Helpers import value
 
 
-class HelpersTestCase(unittest.TestCase):
+class TestHelpers(unittest.TestCase):
     def test_value_helper_without_callable_as_argument_returns_argument(self):
         self.assertEqual('test', value('test'))
 

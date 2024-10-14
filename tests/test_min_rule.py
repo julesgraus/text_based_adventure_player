@@ -3,7 +3,7 @@ import unittest
 from jfw.validation.rules.min_rule import MinRule
 
 
-class MinRuleTestCase(unittest.TestCase):
+class TestMinRule(unittest.TestCase):
     def test_validity(self):
         self.assertFalse(MinRule(2).is_valid(''))
         self.assertFalse(MinRule(2).is_valid(' '))

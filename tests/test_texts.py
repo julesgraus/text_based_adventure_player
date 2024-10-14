@@ -6,7 +6,7 @@ from terminal_utils.style import Style
 from terminal_utils.text import Text
 
 
-class TextsTestCase(unittest.TestCase):
+class TestTexts(unittest.TestCase):
     def test_construction(self):
         text = (Text('Example text')
                 .style(Style.Default)

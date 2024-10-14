@@ -3,7 +3,7 @@ import unittest
 from jfw.validation.rules.int_rule import IntRule
 
 
-class MaxRuleTestCase(unittest.TestCase):
+class TestIntRule(unittest.TestCase):
     def test_validity(self):
         self.assertTrue(IntRule().is_valid(1))
         self.assertFalse(IntRule().is_valid(1.0))

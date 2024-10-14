@@ -6,7 +6,7 @@ from unittest.mock import Mock
 from jfw.exception_handler import ExceptionHandler
 
 
-class ExceptionHandlerTestCase(unittest.TestCase):
+class TestExceptionHandler(unittest.TestCase):
     def test_it_calls_the_loggers_log_method_to_log_the_exception_and_prints_the_exception(self):
         logger_mock = Mock()
         exception_handler = ExceptionHandler(logger_mock)

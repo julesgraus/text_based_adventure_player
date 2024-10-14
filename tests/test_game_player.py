@@ -10,7 +10,7 @@ from jfw.container import Container
 from tests.helpers.GameTestHelper import GameTestHelper
 
 
-class GamePlayerTestCase(unittest.TestCase):
+class TestGamePlayer(unittest.TestCase):
     def test_it_prints_that_it_cannot_resolve_a_dialog(self) -> None:
         config = Config('')
 

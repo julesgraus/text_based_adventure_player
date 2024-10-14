@@ -3,7 +3,7 @@ import unittest
 from jfw.validation.rules.ends_with_rule import EndsWithRule
 
 
-class EndsWithRuleTestCase(unittest.TestCase):
+class TestEndsWithRule(unittest.TestCase):
     def test_validity(self):
         self.assertFalse(EndsWithRule('.txt').is_valid(''))
         self.assertFalse(EndsWithRule('.txt').is_valid('something.test'))

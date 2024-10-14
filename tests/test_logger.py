@@ -4,7 +4,7 @@ import unittest
 from jfw.logger import Logger
 
 
-class LoggerTestCase(unittest.TestCase):
+class TestLogger(unittest.TestCase):
     def test_it_logs(self):
         log_path_mock = MagicMock()
         log_path_mock.__str__.return_value = 'test_log_dir'

@@ -3,7 +3,7 @@ import unittest
 from jfw.container import Container
 
 
-class ContainerTestCase(unittest.TestCase):
+class TestContainer(unittest.TestCase):
     def setUp(self):
         self.container = Container()
 

@@ -7,7 +7,7 @@ from terminal_utils.style import Style
 from terminal_utils.text import Text
 from terminal_utils.texts import Texts
 
-class TextTestCase(unittest.TestCase):
+class TestText(unittest.TestCase):
     def test_adding_text(self):
 
         with patch('terminal_utils.texts.Text', Mock(spec_set=Text)) as text_mock:
