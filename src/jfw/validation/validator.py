@@ -86,8 +86,19 @@ class Validator:
                 path_part = str(iteration) if isinstance(current, list) else key_or_value
                 value_part = key_or_value if isinstance(current, list) else current[key_or_value]
 
-                nested_path.append(path_part)
-                values[".".join(nested_path)] = value_part
+                if(self._is_iterable(value_part)):
+                    deep_nested_path = nested_path.copy()
+                    deep_nested_path.append(path_part)
+                    result = self._resolve_value(value_part, attributes, deep_nested_path)
+                    if isinstance(result, dict):
+                        values = {**values, **result}
+                    else:
+                        values[".".join(nested_path)] = result
+                else:
+                    nested_path.append(path_part)
+                    values[".".join(nested_path)] = value_part
+
+
             return values
 
         if (self._is_sequence_type(current)
