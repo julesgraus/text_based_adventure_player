@@ -1,7 +1,11 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 from app.dialog_validator import DialogValidator
+from app.dto.meta import Meta as MetaDto
+from app.dto.game import Game as GameDto
+from app.dto.init import Init as InitDto
+from app.dto.system_data import SystemData
 from app.game_creator import GameCreator
 from app.game_loader import GameLoader
 from app.game_player import GamePlayer
@@ -12,67 +16,77 @@ from tests.helpers.GameTestHelper import GameTestHelper
 
 class TestGamePlayer(unittest.TestCase):
     def test_it_prints_that_it_cannot_resolve_a_dialog(self) -> None:
-        config = Config('')
+        config = Mock()
+        dialog_validator = Mock()
+        dialog_validator.validate = Mock(side_effect=[False])
 
-        game_loader_test_helper = GameTestHelper(config)
-        game_loader_test_helper.setup_empty_temp_base_game_path()
+        game_player = GamePlayer(
+            config=config,
+            dialog_validator=dialog_validator
+        )
 
-        game_creator = GameCreator(config)
-        game_creator.create('a game', 'a description')
+        game = GameDto(
+            meta=MetaDto(
+                name="test game",
+                description="test description",
+                game_directory="test",
+            ),
+            state={
+                "game_data_checksum": "",
+                "system_data_checksum": "",
+                "game_data": {},
+                "system_data": SystemData(
+                    current_dialog="main"
+                )
+            },
+            init=InitDto(
+                state={},
+                dialog='main'
+            )
+        )
 
-        game_loader = GameLoader(config)
-
-        game = game_loader.available_games()[0]
-        game['state']['system_data']['current_dialog'] = 'doesnotexist'
-
-        game_player = GamePlayer(config=config, dialog_validator=DialogValidator(config=config))
-
-        with patch("builtins.print", return_value="") as mock_input:
+        with patch("builtins.print", Mock()) as mock_print:
             game_player.play(game)
-
-            output = str(mock_input.call_args.args[0])
-
+            output = str(mock_print.call_args.args[0])
             self.assertIn('Could not resolve dialog', output)
 
     def test_it_prints_validation_errors(self) -> None:
-        container = Container()
+        config = Mock()
+        dialog_validator = Mock()
+        dialog_validator.is_valid = Mock(side_effect=[False])
+        dialog_validator.validate = Mock(side_effect=[dialog_validator])
+        dialog_validator.get_errors = Mock(side_effect=[['test validation error']])
 
-        config = Config('')
-        container.bind('config', config)
+        game_player = GamePlayer(
+            config=config,
+            dialog_validator=dialog_validator
+        )
 
-        game_test_helper = GameTestHelper(config)
-        game_test_helper.setup_empty_temp_base_game_path()
-
-        dialog_validator = DialogValidator(config=config)
-
-        container.bind('dialog_validator', dialog_validator)
-
-        with (
-            patch("builtins.print", return_value="") as mock_output,
-        ):
-            game_creator = GameCreator(config=config)
-            game_creator.create('test_game', 'test_description')
-
-            game_test_helper.create_dialog(
-                game_name="test_game",
-                dialog_name='test_dialog',
-                dialog_file_contents={},
-                txt_file_contents=""
+        game = GameDto(
+            meta=MetaDto(
+                name="test game",
+                description="test description",
+                game_directory="test",
+            ),
+            state={
+                "game_data_checksum": "",
+                "system_data_checksum": "",
+                "game_data": {},
+                "system_data": SystemData(
+                    current_dialog="test dialog"
+                )
+            },
+            init=InitDto(
+                state={},
+                dialog='main'
             )
+        )
 
-            game_loader = GameLoader(config=config)
-
-            game = game_loader.available_games()[0]
-            game['state']['system_data']['current_dialog'] = 'test_dialog'
-
-            game_player = GamePlayer(config=config, dialog_validator=DialogValidator(config=config))
-
+        with patch("builtins.print", Mock()) as mock_print:
             game_player.play(game)
-
-            # the mock output are Text class instances which can be converted to strings.
-            output_string = "".join(map(lambda x: str(x), mock_output.call_args[0]))
-            self.assertIn('"test_dialog" is invalid', output_string)
-            self.assertIn('text is required', output_string)
+            output = str(mock_print.call_args.args[0])
+            self.assertIn('"test dialog" is invalid:', output)
+            self.assertIn('test validation error', output)
 
 
 if __name__ == '__main__':

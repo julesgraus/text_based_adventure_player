@@ -3,6 +3,7 @@ from os.path import isfile
 
 from app.base_game_handler import BaseGameHandler
 from jfw.validation.rules.ends_with_rule import EndsWithRule
+from jfw.validation.rules.list_rule import ListRule
 from jfw.validation.rules.max_rule import MaxRule
 from jfw.validation.rules.min_rule import MinRule
 from jfw.validation.rules.required_rule import RequiredRule
@@ -25,7 +26,11 @@ class DialogValidator(BaseGameHandler):
 
             validator = Validator(contents, {
                 'text': [RequiredRule(), StrRule(), MinRule(1), MaxRule(255), EndsWithRule('.txt')],
+                'actions': [RequiredRule(), ListRule(), MinRule(1)],
+                'actions.*': [StrRule()]
             })
+
+            validator.is_valid()
 
             return validator
 

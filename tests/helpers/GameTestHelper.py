@@ -10,8 +10,9 @@ from jfw.config import Config
 
 class GameTestHelper:
     def __init__(self, config: Config):
-        self.tempdir = f'{gettempdir()}/test'
-        self.dialogDir = f'{gettempdir()}/test/dialogs'
+        tempdir = gettempdir()
+
+        self.tempdir = f'{tempdir}/adventure_player_tests'
         self.config = config
 
     def setup_empty_temp_base_game_path(self):
@@ -25,12 +26,16 @@ class GameTestHelper:
         return self
 
     def create_dialog(self, game_name: str, dialog_name: str, dialog_file_contents: dict, txt_file_contents: AnyStr):
-        if isdir(f'{self.tempdir}/') is False:
-            raise RuntimeError(f'Game "{game_name}" does not exist')
+        if isdir(f'{self.tempdir}/{game_name}') is False:
+            mkdir(f'{self.tempdir}/{game_name}')
+
+        dialog_dir = f'{self.tempdir}/{game_name}/dialogs'
+        if isdir(dialog_dir) is False:
+            mkdir(dialog_dir)
 
         with (
-            open(f'{self.tempdir}/{game_name}/dialogs/{dialog_name}.json', 'w+') as dialogFile,
-            open(f'{self.tempdir}/{game_name}/dialogs/{dialog_name}.txt', 'w+') as txtFile
+            open(f'{dialog_dir}/{dialog_name}.json', 'w+') as dialogFile,
+            open(f'{dialog_dir}/{dialog_name}.txt', 'w+') as txtFile
         ):
             dialogFile.write(dumps(dialog_file_contents))
             txtFile.write(dumps(txt_file_contents))

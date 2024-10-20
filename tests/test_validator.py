@@ -71,6 +71,45 @@ class TestValidator(unittest.TestCase):
 
         self.assertFalse(validator.is_valid())
 
+    def test_it_validates_nested_list_value(self):
+        validator = Validator({
+            'data': [1]
+        }, {
+            'data.0': [StrRule()],
+        })
+
+        self.assertFalse(validator.is_valid())
+        self.assertListEqual(validator.get_errors(), ['data.0 must be a string'])
+
+    def test_it_tries_to_validate_a_nested_list_value_that_does_not_exist(self):
+        validator = Validator({
+            'data': [1]
+        }, {
+            'data.1': [StrRule()],
+        })
+
+        self.assertTrue(validator.is_valid())
+
+    def test_it_validates_nested_list_values_using_asterisk_rule(self):
+        validator = Validator({
+            'data': [1, '', 2]
+        }, {
+            'data.*': [StrRule()],
+        })
+
+        self.assertFalse(validator.is_valid())
+        self.assertListEqual(validator.get_errors(), ['data.0 must be a string', 'data.2 must be a string'])
+
+    def test_it_validates_nested_dict_values_using_asterisk_rule(self):
+        validator = Validator({
+            'data': {'one': 1, 'two': '', 'three': 2}
+        }, {
+            'data.*': [StrRule()],
+        })
+
+        self.assertFalse(validator.is_valid())
+        self.assertListEqual(validator.get_errors(), ['data.one must be a string', 'data.three must be a string'])
+
 
 
 if __name__ == '__main__':

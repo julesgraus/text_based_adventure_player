@@ -15,20 +15,26 @@ class GamePlayer(BaseGameHandler):
         super().__init__(config)
         self._dialog_validator = dialog_validator
 
-    def play(self, game: GameDto):
+    def play(self, game: GameDto) -> None:
+        if self._validate_current_dialog(game) is False:
+            return
+
+    def _validate_current_dialog(self, game: GameDto) -> bool:
         current_dialog_name = self._determine_current_dialog(game)
 
         validator_or_false = self._dialog_validator.validate(name=game["meta"]["name"], dialog_name=current_dialog_name)
 
         if validator_or_false is False:
             print((Texts().add(f'Could not resolve dialog', Fg.Bright_Red, Bg.Red)))
-            return
+            return False
 
         if self._print_dialog_validation_errors_if_invalid(
                 dialog_name=current_dialog_name,
                 validator=validator_or_false
         ) is False:
-            return
+            return False
+
+        return True
 
     def _determine_current_dialog(self, game: GameDto):
         system_data = game['state']['system_data']

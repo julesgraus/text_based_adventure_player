@@ -22,8 +22,6 @@ class BaseGameHandler:
         if self._base_game_path is None:
             raise RuntimeError('base_game_path config setting not set')
 
-        makedirs(self._base_game_path, exist_ok=True)
-
     def is_valid_game(self, name: str):
         if isdir(self._game_directory(name=name)) is False:
             return False

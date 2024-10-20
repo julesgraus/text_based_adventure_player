@@ -11,23 +11,6 @@ from tests.helpers.GameTestHelper import GameTestHelper
 
 
 class TestGameLoader(unittest.TestCase):
-    def test_it_creates_the_base_game_path_on_init(self) -> None:
-        tempdir = f'{gettempdir()}/test'
-
-        if exists(tempdir):
-            rmtree(tempdir)
-
-        self.assertFalse(exists(tempdir))
-
-        config = Config('')
-        config.set('base_game_path', tempdir)
-
-        GameLoader(config)
-
-        self.assertTrue(exists(tempdir))
-        rmdir(tempdir)
-        self.assertFalse(exists(tempdir))
-
     def test_it_can_determine_that_a_game_does_not_exist_because_it_is_invalid(self) -> None:
         config = Config('')
 
