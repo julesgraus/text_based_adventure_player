@@ -1,6 +1,8 @@
 import unittest
 
+from jfw.validation.rules.bool_rule import BoolRule
 from jfw.validation.rules.int_rule import IntRule
+from jfw.validation.rules.list_rule import ListRule
 from jfw.validation.rules.max_rule import MaxRule
 from jfw.validation.rules.min_rule import MinRule
 from jfw.validation.rules.required_rule import RequiredRule
@@ -150,6 +152,25 @@ class TestValidator(unittest.TestCase):
         self.assertFalse(validator.is_valid())
         self.assertListEqual(validator.get_errors(),
                              ['data.one.two.0 must be an integer', 'data.one.two.1 must be a string'])
+
+    def test_it_validates_complex_data_with_multiple_rules(self) -> None:
+        validator = Validator({
+            'data': {
+                'one': {
+                    'two': ['', 1]
+                },
+                'two': [1, 2]
+            },
+            'meta': True
+        }, {
+            'meta': [BoolRule()],
+            'data.one.two.0': [StrRule()],
+            'data.one.two.1': [IntRule()],
+            'data.two': [ListRule(), MaxRule(2)],
+            'data.two.*': [IntRule()],
+        })
+
+        self.assertTrue(validator.is_valid())
 
 if __name__ == '__main__':
     unittest.main()
